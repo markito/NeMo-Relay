@@ -78,9 +78,7 @@ asking every layer to invent its own wrappers and trace vocabulary.
 
 ```mermaid
 flowchart LR
-    Sources["Application Code
-             Agent Harness
-             Agent Framework"]
+    Sources["Application Code, Agent Harness, Agent Framework"]
     subgraph Runtime[NeMo Relay Middleware]
         direction TB
         Scopes[Scopes]
