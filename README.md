@@ -231,7 +231,7 @@ Full documentation lives at [docs.nvidia.com/nemo/relay](https://docs.nvidia.com
 | Configure plugin files | [Plugin Configuration Files](https://docs.nvidia.com/nemo/relay/configure-plugins/plugin-configuration-files) |
 | Tune performance with adaptive behavior | [Adaptive](https://docs.nvidia.com/nemo/relay/configure-plugins/adaptive/about) |
 | Debug trace incidents | [Troubleshooting Guide](https://docs.nvidia.com/nemo/relay/resources/troubleshooting) |
-| Look up symbols | [APIs](https://docs.nvidia.com/nemo/relay/reference/api) |
+| Look up APIs | [APIs](https://docs.nvidia.com/nemo/relay/reference/api) |
 | See what changed | [Release Notes](https://docs.nvidia.com/nemo/relay/about-nemo-relay/release-notes) |
 
 ## Community and Support
