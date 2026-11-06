@@ -60,6 +60,7 @@ For other harnesses and frameworks, check our [quick starts](https://docs.nvidia
 
 - **Watch the livestream:** [Inside Hermes Agent Traces with NeMo Relay | Nemotron Labs](https://www.youtube.com/watch?v=7HTRAsVX10E).
 - **Follow the tutorial:** [Tracing Agent Harness Behavior with NVIDIA NeMo Relay](https://developer.nvidia.com/blog/tracing-agent-harness-behavior-with-nvidia-nemo-relay/).
+
   Run Hermes Agent examples, inspect model and tool traces in Arize Phoenix,
   and use trace evidence to evaluate harness changes.
 
