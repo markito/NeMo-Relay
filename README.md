@@ -21,14 +21,16 @@ tool calls so you can observe, control, and tune them, without rewriting the
 agent stack you already have.
 
 - **See every agent run.** Capture model calls, tool calls, turns, and subagents
-  from Hermes, Claude Code, Codex, LangChain, Google ADK, Pi or your own code as one event
-  stream, then export it as raw events, trajectories, OpenTelemetry, or
-  OpenInference.
+  from Hermes Agent, Claude Code, Codex, OpenClaw, pi, LangChain, Google ADK, or
+  your own code as one event stream, then export it as raw events,
+  trajectories, OpenTelemetry, or OpenInference.
 - **Enforce policy at the call.** Middleware and guardrails can block,
   sanitize, redact, or rewrite a tool or model call before it runs, not after
   the fact.
-- **Keep the stack you have.** Relay can attach to existing agents, frameworks,
-  and providers through a CLI sidecar, or SDKs for Python, Node.js, and Rust.
+- **Keep the stack you have.** Relay attaches to supported agents and
+  frameworks through the Relay CLI or maintained integrations, and to your own
+  code through SDKs for Python, Node.js, and Rust.
+- **Extend it with plugins.** Turn on built-in observability, PII redaction, model pricing, resource metrics, and adaptive tuning from one `plugins.toml` file, or build your own exporters, middleware, and policies as custom plugins.
 - **Tune cost and latency.** Model pricing estimates the cost of each call, and
   adaptive plugins tune caching and request hints from observed behavior.
 
@@ -40,12 +42,15 @@ agent stack you already have.
 
 ## Quick Start
 
-Put Relay in front of a coding agent you already use:
+Put Relay in front of a supported coding agent you already use:
 
 ```bash
-pip install nemo-relay-cli-bin
+curl -fsSL https://raw.githubusercontent.com/NVIDIA/NeMo-Relay/main/install.sh | sh
 nemo-relay claude    # or: nemo-relay codex
 ```
+
+On Windows, install with
+`irm https://raw.githubusercontent.com/NVIDIA/NeMo-Relay/main/install.ps1 | iex`.
 
 On first run, Relay walks you through setup in your terminal. After that, each
 run launches the agent with Relay attached and removes it when the agent exits.
@@ -104,10 +109,11 @@ Pick the row closest to what you are trying to do.
 
 | Goal | Start With | How Relay Attaches |
 |---|---|---|
-| Observe Codex, Claude Code, or pi on your machine | Quick start for [Codex](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/codex), [Claude Code](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/claude-code), or [pi](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/pi) | A local sidecar forwards agent hooks and routes provider traffic. No application code changes. |
+| Observe Codex, Claude Code, or pi on your machine | Quick start for [Codex](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/codex), [Claude Code](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/claude-code), or [pi](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/pi) | The Relay CLI connects to these supported agents' hooks and provider traffic. No application code changes. |
 | Use Hermes Agent | [Hermes Agent quick start](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/hermes) | Relay is built into Hermes Agent and reads standard Relay plugin configuration. No CLI or separate plugin needed. |
+| Use OpenClaw | [OpenClaw Plugin Guide](https://docs.nvidia.com/nemo/relay/supported-integrations/openclaw-plugin) | The `nemo-relay-openclaw` plugin maps OpenClaw hooks to Relay events and pre-tool guardrails. |
 | Instrument LLM or tool calls your application owns | [Python](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/python), [Node.js](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/nodejs), or [Rust](https://docs.nvidia.com/nemo/relay/getting-started/quick-start/rust) quick start | Direct SDK instrumentation runs the full lifecycle and middleware sequence around your callbacks. |
-| Use LangChain, LangGraph, Deep Agents, Google ADK, or OpenClaw | [Supported Integrations](https://docs.nvidia.com/nemo/relay/supported-integrations/about) | Maintained integrations use public framework or plugin APIs. |
+| Use LangChain, LangGraph, Deep Agents, or Google ADK | [Supported Integrations](https://docs.nvidia.com/nemo/relay/supported-integrations/about) | Maintained integrations use public framework APIs. |
 | Export traces, trajectories, or raw events | [Observability](https://docs.nvidia.com/nemo/relay/configure-plugins/observability/about) | Exporters consume one event stream and write ATOF, ATIF, OpenTelemetry, or OpenInference. |
 | Run Relay as a shared, administrator-managed service | [Daemon](https://docs.nvidia.com/nemo/relay/daemon/about) | A background daemon gives every user and coding agent one managed entry point, locally or on a remote Linux server. |
 | Build a framework, host, or provider integration | [Integrate into Frameworks](https://docs.nvidia.com/nemo/relay/integrate-into-frameworks/about) | Wrap the framework's tool and LLM call sites. |
@@ -119,8 +125,8 @@ Pick the row closest to what you are trying to do.
 Install the component that matches where Relay attaches, then follow the quick start for your agent, framework, or language from the table above.
 
 ```bash
-# CLI for coding agents (Claude Code, Codex, pi)
-pip install nemo-relay-cli-bin
+# CLI for supported coding agents (Claude Code, Codex, pi)
+curl -fsSL https://raw.githubusercontent.com/NVIDIA/NeMo-Relay/main/install.sh | sh
 
 # Python 3.11+ (add extras for langchain, langgraph, deepagents, google-adk)
 uv add nemo-relay
@@ -132,8 +138,9 @@ npm install nemo-relay-node
 cargo add nemo-relay
 ```
 
-The CLI also ships as a [shell or PowerShell installer](https://docs.nvidia.com/nemo/relay/getting-started/installation#cli)
-and through Cargo. Refer to [Installation](https://docs.nvidia.com/nemo/relay/getting-started/installation)
+On Windows, install the CLI with the
+[PowerShell installer](https://docs.nvidia.com/nemo/relay/getting-started/installation#cli).
+Refer to [Installation](https://docs.nvidia.com/nemo/relay/getting-started/installation)
 for platforms, version pinning, and integration packages, or to
 [Quick Starts](https://docs.nvidia.com/nemo/relay/getting-started/quick-start)
 for a first run in a few minutes.
@@ -192,7 +199,7 @@ How much Relay can do depends on where the real call happens:
 |---|---|---|
 | The call can be routed through Relay | **Managed execution** | Run middleware, then invoke the real function. Full observe and control. |
 | The framework keeps control but emits before/after notifications | **Lifecycle hooks** | Translate hooks into Relay events. Observe, but not execute or rewrite. |
-| Provider-native requests must be intercepted | **Gateway** | Route real provider traffic through the Relay gateway. Relay becomes a production dependency. |
+| A supported coding agent sends model requests itself | **Gateway** | The Relay CLI routes that agent's provider traffic to record LLM calls. Use it only with the supported coding agents. |
 
 Refer to [Concepts](https://docs.nvidia.com/nemo/relay/about-nemo-relay/concepts)
 for the deeper model.
@@ -207,7 +214,8 @@ runtime behavior. Go and the C FFI are experimental and source-first.
 | Claude Code | ✅ | ✅ | Partial |
 | Codex | ✅ | ✅ | Partial |
 | Hermes Agent (built in) | ✅ | ✅ | Partial |
-| pi (proof of concept) | Partial | ✅ | – |
+| OpenClaw | ✅ | Partial | – |
+| pi (experimental) | Partial | ✅ | – |
 
 | Framework | Observability | Security | Optimization |
 |:--|:--:|:--:|:--:|
@@ -215,7 +223,6 @@ runtime behavior. Go and the C FFI are experimental and source-first.
 | LangGraph | ✅ | ✅ | ✅ |
 | Deep Agents | ✅ | ✅ | ✅ |
 | Google ADK | ✅ | ✅ | ✅ |
-| OpenClaw | ✅ | Partial | – |
 
 Refer to the [Support Matrix](https://docs.nvidia.com/nemo/relay/reference/support-matrix)
 for minimum versions, platforms, and current limitations.
