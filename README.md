@@ -3,12 +3,6 @@ SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All
 SPDX-License-Identifier: Apache-2.0
 -->
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="fern/assets/NVIDIA_dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="fern/assets/NVIDIA_light.svg">
-  <img alt="NVIDIA" src="fern/assets/NVIDIA_light.svg" width="200">
-</picture>
-
 # NVIDIA NeMo Relay
 
 [![License](https://img.shields.io/github/license/NVIDIA/NeMo-Relay)](https://github.com/NVIDIA/NeMo-Relay/blob/main/LICENSE)
